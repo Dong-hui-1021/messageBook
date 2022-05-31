@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ldh.mapper.MessageMapper">
+    <resultMap id="Message" type="com.ldh.bean.Message">
+        <id property="id" column="id"/>
+        <result property="message" column="message"/>
+        <result property="description" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <association property="user" javaType="com.ldh.bean.User">
+            <id property="id" column="u_id"/>
+            <result property="name" column="name"/>
+        </association>
+
+
+     </resultMap>
+    <insert id="insertMessage">
+        insert into message(message,description,create_time,u_id) value (#{param1.message},#{param1.description},#{param1.createTime},#{param2})
+    </insert>
+    <insert id="insertIntoDeleted">
+        insert into deleted(message,description,create_time,delete_time,u_id) value (#{message},#{description},#{createTime},#{updateTime},#{user.id})
+    </insert>
+    <delete id="deleteMessage">
+        delete from message where id=#{id}
+    </delete>
+
+    <select id="selectAll" resultMap="Message">
+        select message.id,message,description,create_time,update_time,u_id,name
+        from user,message
+        where user.id=message.u_id
+    </select>
+    <select id="selectOnce" resultMap="Message">
+        select message.id,message,description,create_time,update_time,u_id,name
+        from user,message
+        where user.id = message.u_id  and message.id = #{id}
+    </select>
+    <select id="selectMine" resultMap="Message">
+         select message.id,message,description,create_time,update_time,u_id,name
+        from user,message
+        where user.id =#{id} and message.u_id = #{id}
+    </select>
+</mapper>
